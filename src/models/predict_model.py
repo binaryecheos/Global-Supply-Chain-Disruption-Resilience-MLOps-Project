@@ -45,7 +45,9 @@ def save_metrics(metrics: dict, output_path: str):
 def main():
     test_data_path = r"data/processed/test_processed.csv"
     model_path = os.path.join("models", "model.pkl")
-    metrics_path = "metrics.json"
+    reports_dir = "reports"
+    os.makedirs(reports_dir, exist_ok=True)
+    metrics_path = os.path.join(reports_dir, "metrics.json")
 
     test_data = load_test_data(test_data_path)
     if 'Mitigation_Action_Taken' not in test_data.columns:

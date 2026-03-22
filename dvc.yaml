@@ -28,4 +28,4 @@ stages:
     deps:
     - models/model.pkl
     metrics:
-    - metrics.json
+    - reports/metrics.json
