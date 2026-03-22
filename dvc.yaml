@@ -1,0 +1,31 @@
+stages:
+  data_collection:
+    cmd: uv run python src/data/make_dataset.py
+    deps:
+    - src/data/make_dataset.py
+    params:
+    - data_collection.test_size
+    outs:
+    - data/raw
+  pre_processing:
+    cmd: uv run python src/features/build_features.py
+    deps:
+    - data/raw
+    - src/features/build_features.py
+    outs:
+    - data/processed
+  model_building:
+    cmd: uv run python src/models/train_model.py
+    deps:
+    - data/processed
+    - src/models/train_model.py
+    params:
+    - model_building.n_estimators
+    outs:
+    - models/model.pkl
+  model_eval:
+    cmd: uv run python src/models/predict_model.py
+    deps:
+    - models/model.pkl
+    metrics:
+    - metrics.json
