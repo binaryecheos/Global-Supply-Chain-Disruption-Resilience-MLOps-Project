@@ -1,68 +1,68 @@
 schema: '2.0'
 stages:
   data_collection:
-    cmd: uv run python src/data/make_dataset.py
+    cmd: python src/data/make_dataset.py
     deps:
     - path: src/data/make_dataset.py
       hash: md5
-      md5: d1ede7a754d755e305105881fb85cd8b
-      size: 2439
+      md5: dfa69fd83ee4d33eede9ad52779710ed
+      size: 2357
     params:
       params.yaml:
         data_collection.test_size: 0.2
     outs:
     - path: data/raw
       hash: md5
-      md5: 0f44951fb0b3e0c8b7cdf346b80e7688.dir
-      size: 1482991
+      md5: 669ff65f812bbbbfcfae0a51b5877659.dir
+      size: 1472989
       nfiles: 2
   pre_processing:
-    cmd: uv run python src/features/build_features.py
+    cmd: python src/features/build_features.py
     deps:
     - path: data/raw
       hash: md5
-      md5: 0f44951fb0b3e0c8b7cdf346b80e7688.dir
-      size: 1482991
+      md5: 669ff65f812bbbbfcfae0a51b5877659.dir
+      size: 1472989
       nfiles: 2
     - path: src/features/build_features.py
       hash: md5
-      md5: 1345998ef4fa83e6acae47e37ca94f09
-      size: 2077
+      md5: 18f1b840a22b560530eee94fe4a74e74
+      size: 2016
     outs:
     - path: data/processed
       hash: md5
-      md5: 51847429d81047ee59a65792289b4424.dir
-      size: 2409050
+      md5: fb8e393358433943cfd81952a624e24a.dir
+      size: 2399048
       nfiles: 2
   model_building:
-    cmd: uv run python src/models/train_model.py
+    cmd: python src/models/train_model.py
     deps:
     - path: data/processed
       hash: md5
-      md5: 51847429d81047ee59a65792289b4424.dir
-      size: 2409050
+      md5: fb8e393358433943cfd81952a624e24a.dir
+      size: 2399048
       nfiles: 2
     - path: src/models/train_model.py
       hash: md5
-      md5: fcd490a1e34d3c1fda49b18fff10ca2a
-      size: 7820
+      md5: c38cf79a5397d632e234360773660449
+      size: 7673
     params:
       params.yaml:
         model_building.n_estimators: 100
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: d47820f88680c21c03983a8b3c9e77a0
-      size: 1180075
+      md5: 6a55107d9fea4a1c3de94c4718900e95
+      size: 1180109
   model_eval:
-    cmd: uv run python src/models/predict_model.py
+    cmd: python src/models/predict_model.py
     deps:
     - path: models/model.pkl
       hash: md5
-      md5: d47820f88680c21c03983a8b3c9e77a0
-      size: 1180075
+      md5: 6a55107d9fea4a1c3de94c4718900e95
+      size: 1180109
     outs:
     - path: reports/metrics.json
       hash: md5
-      md5: 59732e664c5147279dc8fe3ca2e8f161
-      size: 126
+      md5: aa238a5d4bbeaaf70d1a216079ea7ad1
+      size: 121

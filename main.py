@@ -14,8 +14,8 @@ app = FastAPI(
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-model_path = os.path.join(BASE_DIR, "model.pkl")
-columns_path = os.path.join(BASE_DIR, "columns.pkl")
+model_path = os.path.join(BASE_DIR, "models", "model.pkl")
+columns_path = os.path.join(BASE_DIR, "models", "columns.pkl")
 
 if not os.path.exists(model_path):
     raise FileNotFoundError(f"Model file not found at {model_path}")
