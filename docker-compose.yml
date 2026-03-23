@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  mlflow:
+    image: python:3.11-slim
+    command: >
+      sh -c "
+        pip install mlflow &&
+        mlflow server --backend-store-uri sqlite:///app/mlflow.db --default-artifact-root /app/mlruns --host 0.0.0.0 --port 5000
+      "
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/app
+    networks:
+      - mlops_network
+
+  training:
+    build: .
+    command: >
+      sh -c "
+        if [ -d 'data/external' ] && [ \"$(ls -A data/external)\" ]; then
+          echo 'Data found, initializing git repo if needed...'
+          if [ ! -d '.git' ]; then
+            git init
+            git add .
+            git -c user.email='docker@example.com' -c user.name='Docker' commit -m 'Initial commit for DVC'
+          fi
+          echo 'Running DVC pipeline...'
+          dvc repro
+        else
+          echo 'No data in data/external, skipping DVC pipeline. Ensure model files exist in models/ or provide data.'
+        fi
+      "
+    volumes:
+      - .:/app
+      - mlflow_data:/app/mlruns
+      - models_data:/app/models
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
+    networks:
+      - mlops_network
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - models_data:/app/models
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - training
+    networks:
+      - mlops_network
+
+volumes:
+  mlflow_data:
+  models_data:
+
+networks:
+  mlops_network:

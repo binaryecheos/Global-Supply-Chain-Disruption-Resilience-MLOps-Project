@@ -14,7 +14,7 @@ if PROJECT_ROOT not in sys.path:
 
 from src.models.predict_model import evaluate_model
 
-mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000"))
 mlflow.set_experiment("Supply Chain Disruption Mitigation Model Evaluation")
 
 def load_data(file_path: str) -> pd.DataFrame:

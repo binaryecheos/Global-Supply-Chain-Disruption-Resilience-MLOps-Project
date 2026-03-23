@@ -94,7 +94,29 @@ Open `http://127.0.0.1:5000` to view experiments, runs, and model registry.
 uvicorn main:app --reload
 ```
 
-Then POST to `http://127.0.0.1:8000/predict` with JSON payload matching `SupplyChainInput` schema.
+### 5. Deploy with Docker
+
+For full pipeline execution, place your dataset in `data/external/` before building.
+
+```bash
+# Place data
+cp /path/to/your/data.csv data/external/
+
+# Build & orchestrate
+docker-compose up --build
+```
+
+This starts:
+- MLflow server on `http://localhost:5000`
+- Training service: runs `dvc repro` if data exists, else skips
+- FastAPI API on `http://localhost:8000` (waits for training)
+
+Or build and run individually:
+
+```bash
+docker build -t gsc-api .
+docker run -p 8000:8000 gsc-api
+```
 
 ---
 

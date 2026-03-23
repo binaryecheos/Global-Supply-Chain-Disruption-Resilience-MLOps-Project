@@ -10,7 +10,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000"))
 mlflow.set_experiment("Supply Chain Disruption Mitigation Model Evaluation")
 
 

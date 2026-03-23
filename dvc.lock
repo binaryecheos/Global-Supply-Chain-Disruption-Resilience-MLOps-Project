@@ -44,8 +44,8 @@ stages:
       nfiles: 2
     - path: src/models/train_model.py
       hash: md5
-      md5: ed13b2a18fd4c1992ae6e7b30382a281
-      size: 8466
+      md5: fcd490a1e34d3c1fda49b18fff10ca2a
+      size: 7820
     params:
       params.yaml:
         model_building.n_estimators: 100
