@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   mlflow:
     image: python:3.11-slim
     command: >
       sh -c "
         pip install mlflow &&
-        mlflow server --backend-store-uri sqlite:///app/mlflow.db --default-artifact-root /app/mlruns --host 0.0.0.0 --port 5000
+        mlflow server --backend-store-uri sqlite:///app/mlflow.db --default-artifact-root /app/mlruns --host 0.0.0.0 --port 5000 --allowed-hosts '*' --cors-allowed-origins '*'
       "
     ports:
       - "5000:5000"
@@ -35,7 +33,7 @@ services:
     volumes:
       - .:/app
       - mlflow_data:/app/mlruns
-      - models_data:/app/models
+      - ./models:/app/models
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
     depends_on:
@@ -45,20 +43,28 @@ services:
 
   api:
     build: .
+    command: >
+      sh -c "
+        if [ ! -f /app/models/model.pkl ] || [ ! -f /app/models/columns.pkl ]; then
+          echo 'Model artifacts not found in /app/models. Run training first or provide model files.'
+          exit 1
+        fi
+        uvicorn main:app --host 0.0.0.0 --port 8000
+      "
     ports:
       - "8000:8000"
     volumes:
-      - models_data:/app/models
+      - ./models:/app/models
     environment:
       - MLFLOW_TRACKING_URI=http://mlflow:5000
     depends_on:
-      - training
+      training:
+        condition: service_completed_successfully
     networks:
       - mlops_network
 
 volumes:
   mlflow_data:
-  models_data:
 
 networks:
   mlops_network:
